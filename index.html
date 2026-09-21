@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A simple daily class tracker for online tutors.">
+  <title>Tutor Class Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>  
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#today" aria-label="Tutor Class Tracker home">
+        <span class="brand-mark" aria-hidden="true">TC</span>
+        <span>Tutor Class Tracker</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a class="nav-link is-active" href="#today" aria-current="page" data-view-target="today">Today</a>
+        <a class="nav-link" href="#schedule" data-view-target="schedule">Schedule</a>
+        <a class="nav-link" href="#history" data-view-target="history">History</a>
+        <a class="nav-link" href="#data" data-view-target="data">Data</a>
+      </nav>
+      <button class="button button-primary topbar-action" type="button" data-open-form>
+        <span aria-hidden="true">+</span>
+        Add class
+      </button>
+    </header>
+
+    <main id="today" class="main-content">
+      <section class="welcome-row" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Your day at a glance</p>
+          <h1 id="page-title">Today</h1>
+          <p class="current-date" id="current-date"></p>
+        </div>
+        <div class="date-chip" aria-label="Today's date">
+          <span class="date-chip-day" id="date-day"></span>
+          <span class="date-chip-month" id="date-month"></span>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Today's class summary">
+        <article class="summary-item summary-item-total">
+          <span class="summary-label">Total classes</span>
+          <strong class="summary-value" id="total-count">0</strong>
+            <span class="summary-detail">on the schedule today</span>
+        </article>
+        <article class="summary-item">
+          <span class="summary-label">Completed</span>
+          <strong class="summary-value" id="completed-count">0</strong>
+          <span class="summary-detail">finished today</span>
+        </article>
+        <article class="summary-item">
+          <span class="summary-label">Upcoming</span>
+          <strong class="summary-value" id="upcoming-count">0</strong>
+          <span class="summary-detail">still to go</span>
+        </article>
+        <article class="summary-item">
+          <span class="summary-label">Remaining</span>
+          <strong class="summary-value" id="remaining-count">0</strong>
+          <span class="summary-detail">not finished or cancelled</span>
+        </article>
+        <article class="summary-item">
+          <span class="summary-label">Cancelled</span>
+          <strong class="summary-value" id="cancelled-count">0</strong>
+          <span class="summary-detail">not taking place</span>
+        </article>
+      </section>
+
+      <section class="next-class-section" aria-labelledby="next-class-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Up next</p>
+            <h2 id="next-class-title">Next class</h2>
+          </div>
+        </div>
+        <div id="next-class-content" aria-live="polite"></div>
+      </section>
+
+      <section class="schedule-section" aria-labelledby="schedule-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Keep your rhythm</p>
+            <h2 id="schedule-title">Today's schedule</h2>
+          </div>
+          <button class="button button-secondary" type="button" data-open-form>
+            <span aria-hidden="true">+</span>
+            Add class
+          </button>
+        </div>
+        <div class="schedule-list" id="schedule-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <main id="schedule-view" class="main-content view-section" hidden>
+      <section aria-labelledby="calendar-page-title">
+        <div class="welcome-row">
+          <div>
+            <p class="eyebrow">Plan ahead</p>
+            <h1 id="calendar-page-title">Schedule</h1>
+            <p class="current-date">Select a date to see its classes.</p>
+          </div>
+          <div class="date-chip" aria-hidden="true">CAL</div>
+        </div>
+
+        <div class="calendar-toolbar">
+          <button class="button button-secondary" type="button" data-calendar-nav="previous" aria-label="Previous month">&larr;</button>
+          <h2 id="calendar-month-title"></h2>
+          <div class="calendar-toolbar-actions">
+            <button class="button button-secondary" type="button" data-calendar-today>Today</button>
+            <button class="button button-secondary" type="button" data-calendar-nav="next" aria-label="Next month">&rarr;</button>
+          </div>
+        </div>
+
+        <div class="calendar" aria-label="Monthly class calendar">
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section class="selected-day-section" aria-labelledby="selected-date-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Selected date</p>
+            <h2 id="selected-date-title"></h2>
+          </div>
+          <span class="selected-day-count" id="selected-day-count"></span>
+        </div>
+        <div class="schedule-list" id="selected-day-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <main id="history-view" class="main-content view-section" hidden>
+      <section aria-labelledby="history-page-title">
+        <div class="welcome-row">
+          <div>
+            <p class="eyebrow">Look back</p>
+            <h1 id="history-page-title">History</h1>
+            <p class="current-date" id="history-period">All saved classes</p>
+          </div>
+          <div class="date-chip" aria-hidden="true">LOG</div>
+        </div>
+
+        <form class="history-filters" id="history-filters">
+          <div class="history-presets" aria-label="Date presets">
+            <span class="history-presets-label">Quick range</span>
+            <button class="history-preset" type="button" data-history-preset="today" aria-pressed="false">Today</button>
+            <button class="history-preset" type="button" data-history-preset="this-week" aria-pressed="false">This week</button>
+            <button class="history-preset" type="button" data-history-preset="last-week" aria-pressed="false">Last week</button>
+            <button class="history-preset" type="button" data-history-preset="this-month" aria-pressed="false">This month</button>
+            <button class="history-preset" type="button" data-history-preset="last-month" aria-pressed="false">Last month</button>
+          </div>
+          <div class="history-filter-grid">
+            <label class="field">
+              <span>From</span>
+              <input id="history-start-date" name="startDate" type="date">
+            </label>
+            <label class="field">
+              <span>To</span>
+              <input id="history-end-date" name="endDate" type="date">
+            </label>
+            <label class="field">
+              <span>Status</span>
+              <select id="history-status" name="status">
+                <option value="all">All statuses</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Student</span>
+              <select id="history-student" name="student">
+                <option value="all">All students</option>
+              </select>
+            </label>
+          </div>
+          <button class="button button-quiet history-reset" type="reset">Clear filters</button>
+        </form>
+      </section>
+
+      <section class="history-summary-section" aria-labelledby="history-summary-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Selected period</p>
+            <h2 id="history-summary-title">Summary</h2>
+          </div>
+          <span class="selected-day-count" id="history-result-count"></span>
+        </div>
+        <div class="summary-grid history-summary-grid" aria-label="History summary">
+          <article class="summary-item summary-item-total">
+            <span class="summary-label">Total classes</span>
+            <strong class="summary-value" id="history-total-count">0</strong>
+          </article>
+          <article class="summary-item">
+            <span class="summary-label">Completed</span>
+            <strong class="summary-value" id="history-completed-count">0</strong>
+          </article>
+          <article class="summary-item">
+            <span class="summary-label">Cancelled</span>
+            <strong class="summary-value" id="history-cancelled-count">0</strong>
+          </article>
+          <article class="summary-item">
+            <span class="summary-label">Scheduled</span>
+            <strong class="summary-value" id="history-scheduled-count">0</strong>
+          </article>
+        </div>
+        <div class="history-rates" id="history-rates" hidden></div>
+      </section>
+
+      <section class="history-results" aria-labelledby="history-results-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Class records</p>
+            <h2 id="history-results-title">All classes</h2>
+          </div>
+        </div>
+        <div class="schedule-list" id="history-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <main id="data-view" class="main-content view-section" hidden>
+      <section aria-labelledby="data-page-title">
+        <div class="welcome-row">
+          <div>
+            <p class="eyebrow">Your records</p>
+            <h1 id="data-page-title">Data</h1>
+            <p class="current-date">Back up or remove your class records on this device.</p>
+          </div>
+          <div class="date-chip" aria-hidden="true">DATA</div>
+        </div>
+
+        <div class="data-panel">
+          <div class="data-panel-heading">
+            <div>
+              <h2>Local storage</h2>
+              <p><strong id="data-class-count">0</strong> saved class records</p>
+            </div>
+            <span class="status-badge status-upcoming">On this device</span>
+          </div>
+          <p class="data-local-note">Your data stays in this browser. It is never uploaded to a server.</p>
+        </div>
+
+        <div class="data-actions" aria-label="Data management actions">
+          <div class="data-action-row">
+            <div>
+              <h2>Export data</h2>
+              <p>Download a JSON backup of all class records.</p>
+            </div>
+            <button class="button button-secondary" type="button" data-export-data>Export JSON</button>
+          </div>
+          <div class="data-action-row">
+            <div>
+              <h2>Import data</h2>
+              <p>Replace current records with a validated JSON backup.</p>
+            </div>
+            <label class="button button-secondary" for="import-file">Choose JSON file</label>
+            <input class="visually-hidden" id="import-file" type="file" accept="application/json,.json">
+          </div>
+          <div class="data-action-row data-action-danger">
+            <div>
+              <h2>Clear all data</h2>
+              <p>Remove every saved class from this browser.</p>
+            </div>
+            <button class="button button-secondary" type="button" data-clear-data>Clear all data</button>
+          </div>
+        </div>
+        <p class="data-error" id="data-error" role="alert" hidden></p>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="class-dialog" id="class-dialog" aria-labelledby="dialog-title">
+    <form class="class-form" id="class-form" method="dialog" novalidate>
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow" id="form-eyebrow">New entry</p>
+          <h2 id="dialog-title">Add a class</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-form aria-label="Close form">&times;</button>
+      </div>
+      <div class="form-fields">
+        <label class="field field-full">
+          <span>Student name</span>
+          <input name="studentName" type="text" autocomplete="name" placeholder="e.g. Maya Patel" required>
+        </label>
+        <label class="field field-full">
+          <span>Date</span>
+          <input name="date" type="date" required>
+        </label>
+        <label class="field">
+          <span>Start time</span>
+          <input name="startTime" type="time" value="09:00" required>
+        </label>
+        <label class="field">
+          <span>End time</span>
+          <input name="endTime" type="time" value="10:00" required>
+        </label>
+        <label class="field field-full" data-edit-only hidden>
+          <span>Status</span>
+          <select name="status">
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </label>
+        <label class="field field-full">
+          <span>Notes <small>(optional)</small></span>
+          <textarea name="notes" rows="3" placeholder="What will you cover?"></textarea>
+        </label>
+      </div>
+      <p class="form-error" id="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" type="button" data-close-form>Cancel</button>
+        <button class="button button-primary" type="submit" data-form-submit>Save class</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="class-dialog" id="cancellation-dialog" aria-labelledby="cancellation-dialog-title">
+    <form class="class-form" id="cancellation-form" method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">Update status</p>
+          <h2 id="cancellation-dialog-title">Cancel class</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-cancellation aria-label="Close cancellation form">&times;</button>
+      </div>
+      <label class="field field-full">
+        <span>Reason <small>(optional)</small></span>
+        <select name="cancellationReason">
+          <option value="">No reason</option>
+          <option value="Student cancelled">Student cancelled</option>
+          <option value="Tutor cancelled">Tutor cancelled</option>
+          <option value="Rescheduled">Rescheduled</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <div class="dialog-actions">
+        <button class="button button-secondary" type="button" data-close-cancellation>Keep scheduled</button>
+        <button class="button button-primary" type="submit">Cancel class</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="class-dialog" id="delete-dialog" aria-labelledby="delete-dialog-title">
+    <form class="class-form" id="delete-form" method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">Permanent action</p>
+          <h2 id="delete-dialog-title">Delete class?</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-delete aria-label="Close delete confirmation">&times;</button>
+      </div>
+      <p class="confirmation-copy">This class will be removed from your tracker. This action cannot be undone.</p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" type="button" data-close-delete>Keep class</button>
+        <button class="button button-danger" type="submit">Delete class</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="class-dialog" id="import-dialog" aria-labelledby="import-dialog-title">
+    <form class="class-form" id="import-form" method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">Replace local data</p>
+          <h2 id="import-dialog-title">Import backup?</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-import aria-label="Close import confirmation">&times;</button>
+      </div>
+      <p class="confirmation-copy">This will replace your current records with <strong id="import-count">0</strong> imported classes. Your existing data will be overwritten.</p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" type="button" data-close-import>Keep current data</button>
+        <button class="button button-primary" type="submit">Replace data</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="class-dialog" id="clear-data-dialog" aria-labelledby="clear-data-dialog-title">
+    <form class="class-form" id="clear-data-form" method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">Permanent action</p>
+          <h2 id="clear-data-dialog-title">Clear all data?</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-clear aria-label="Close clear data confirmation">&times;</button>
+      </div>
+      <p class="confirmation-copy">This will remove all class records from this browser. The action cannot be easily undone unless you have an exported backup.</p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" type="button" data-close-clear>Keep my data</button>
+        <button class="button button-danger" type="submit">Clear all data</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
